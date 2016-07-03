@@ -1,6 +1,3 @@
-#ifndef _GETCH_H_
-#define _GETCH_H_
-
 #include <termios.h>
 #include <stdio.h>
 
@@ -45,7 +42,6 @@ char getche(void)
 }
 
 /* Let's test it out */
-/*
 int main(void)
 {
 	char c;
@@ -56,6 +52,4 @@ int main(void)
 	c = getch();
 	printf("\nYou typed: %c\n", c);
 	return 0;
-}
-*/
-#endif 
+} 
