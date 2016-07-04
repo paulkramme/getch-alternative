@@ -1,55 +1,33 @@
-#include <termios.h>
-#include <stdio.h>
+#include<termios.h>
+#include<unistd.h>
+#include<stdio.h>
+#include"getch.h"
 
-static struct termios old, new;
-
-/* Initialize new terminal i/o settings */
-void initTermios(int echo) 
+/* reads from keypress, doesn't echo */
+int getch(void)
 {
-	tcgetattr(0, &old); /* grab old terminal i/o settings */
-	new = old; /* make new settings same as old settings */
-	new.c_lflag &= ~ICANON; /* disable buffered i/o */
-	new.c_lflag &= echo ? ECHO : ~ECHO; /* set echo mode */
-	tcsetattr(0, TCSANOW, &new); /* use these new terminal i/o settings now */
-}
-
-/* Restore old terminal i/o settings */
-void resetTermios(void) 
-{
-	tcsetattr(0, TCSANOW, &old);
-}
-
-/* Read 1 character - echo defines echo mode */
-char getch_(int echo) 
-{
-	char ch;
-	initTermios(echo);
+	struct termios oldattr, newattr;
+	int ch;
+	tcgetattr( STDIN_FILENO, &oldattr );
+	newattr = oldattr;
+	newattr.c_lflag &= ~( 0u | ICANON | ECHO );
+	tcsetattr( STDIN_FILENO, TCSANOW, &newattr );
 	ch = getchar();
-	resetTermios();
+	tcsetattr( STDIN_FILENO, TCSANOW, &oldattr );
 	return ch;
 }
 
-/* Read 1 character without echo */
-char getch(void) 
+/* reads from keypress, echoes */
+int getche(void)
 {
-	return getch_(0);
+	struct termios oldattr, newattr;
+	int ch;
+	tcgetattr( STDIN_FILENO, &oldattr );
+	newattr = oldattr;
+	newattr.c_lflag &= ~( 0u | ICANON );
+	tcsetattr( STDIN_FILENO, TCSANOW, &newattr );
+	ch = getchar();
+	tcsetattr( STDIN_FILENO, TCSANOW, &oldattr );
+	return ch;
 }
 
-/* Read 1 character with echo */
-char getche(void) 
-{
-	return getch_(1);
-}
-
-/* Let's test it out */
-int main(void)
-{
-	char c;
-	printf("(getche example) please type a letter: ");
-	c = getche();
-	printf("\nYou typed: %c\n", c);
-	printf("(getch example) please type a letter...");
-	c = getch();
-	printf("\nYou typed: %c\n", c);
-	return 0;
-} 
