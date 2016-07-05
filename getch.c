@@ -26,7 +26,6 @@ SOFTWARE.
 #include<stdio.h>
 #include"getch.h"
 
-/* reads from keypress, doesn't echo */
 int getch(void)
 {
 	struct termios oldattr, newattr;
@@ -40,7 +39,6 @@ int getch(void)
 	return ch;
 }
 
-/* reads from keypress, echoes */
 int getche(void)
 {
 	struct termios oldattr, newattr;
@@ -53,4 +51,3 @@ int getche(void)
 	tcsetattr( STDIN_FILENO, TCSANOW, &oldattr );
 	return ch;
 }
-
